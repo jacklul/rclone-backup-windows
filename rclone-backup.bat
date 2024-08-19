@@ -194,22 +194,24 @@ if %TEST_MODE% equ true (
 )
 
 echo  MENU:
-echo   1 - Run synchronization
-echo   2 - Serve through FTP          4 - Serve through FTP (read-only)
-echo   3 - Serve through WebDAV       5 - Serve through WebDAV (read-only)
-echo   C - Open configuration editor  W - Open Web GUI
+echo   R - Run synchronization
 echo   Q - Remote quota information   M - Switch to %NEWMODE% mode
+echo   C - Open configuration editor  G - Open Web GUI
+echo   F - Serve through FTP          W - Serve through WebDAV
 echo   E - Exit
 echo.
 
 set /P M=Type an option then press ENTER: 
-if %M%==1 goto sync
-if %M%==2 goto serve_ftp
-if %M%==3 goto serve_webdav
-if %M%==4 goto serve_ftp_ro
-if %M%==5 goto serve_webdav_ro
-if "%M%"=="w" goto gui
-if "%M%"=="W" goto gui
+if "%M%"=="r" goto sync
+if "%M%"=="R" goto sync
+if "%M%"=="s" goto sync
+if "%M%"=="S" goto sync
+if "%M%"=="f" goto serve_ftp
+if "%M%"=="F" goto serve_ftp
+if "%M%"=="w" goto serve_webdav
+if "%M%"=="W" goto serve_webdav
+if "%M%"=="g" goto gui
+if "%M%"=="G" goto gui
 if "%M%"=="c" goto edit
 if "%M%"=="C" goto edit
 if "%M%"=="q" goto about
@@ -256,47 +258,23 @@ if "%ARG%"=="about" goto eof
 @pause
 goto menu
 
-:: Serve remote through FTP
+:: Serve remote through FTP (read-only)
 :serve_ftp
 cls
-::start "" ftp://localhost:%PORT_FTP%/
 echo ftp://localhost:%PORT_FTP%/
-rclone --config="%RCLONE_CONFIG%" serve ftp %REMOTE_PATH% --addr localhost:%PORT_FTP% %ARGUMENTS_FTP%
+rclone --config="%RCLONE_CONFIG%" serve ftp %REMOTE_PATH% --addr localhost:%PORT_FTP% --read-only %ARGUMENTS_FTP%
 
 if "%ARG%"=="ftp" goto eof
 @pause
 goto menu
 
-:: Serve remote through FTP (read-only)
-:serve_ftp_ro
-cls
-::start "" ftp://localhost:%PORT_FTP%/
-echo ftp://localhost:%PORT_FTP%/
-rclone --config="%RCLONE_CONFIG%" serve ftp %REMOTE_PATH% --addr localhost:%PORT_FTP% --read-only %ARGUMENTS_FTP%
-
-if "%ARG%"=="ftp_ro" goto eof
-@pause
-goto menu
-
-:: Serve remote through WebDAV
+:: Serve remote through WebDAV (read-only)
 :serve_webdav
 cls
-::start "" http://localhost:%PORT_WEBDAV%/
-echo http://localhost:%PORT_WEBDAV%/
-rclone --config="%RCLONE_CONFIG%" serve webdav %REMOTE_PATH% --addr localhost:%PORT_WEBDAV% %ARGUMENTS_WEBDAV%
-
-if "%ARG%"=="webdav" goto eof
-@pause
-goto menu
-
-:: Serve remote through WebDAV (read-only)
-:serve_webdav_ro
-cls
-::start "" http://localhost:%PORT_WEBDAV%/
 echo http://localhost:%PORT_WEBDAV%/
 rclone --config="%RCLONE_CONFIG%" serve webdav %REMOTE_PATH% --addr localhost:%PORT_WEBDAV% --read-only %ARGUMENTS_WEBDAV%
 
-if "%ARG%"=="webdav_ro" goto eof
+if "%ARG%"=="webdav" goto eof
 @pause
 goto menu
 
